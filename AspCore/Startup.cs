@@ -33,6 +33,8 @@ namespace AspCore
             container.Configure(config =>
             {
                 config.AddRegistry(new StructuremapServiceRegistry());
+                config.AddRegistry(new StructuremapContextRegistry());
+                config.AddRegistry(new StructuremapUnitOfWorkRegistry());
             });
         }
 

@@ -1,33 +1,30 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
-    using System;
     using System.Collections.Generic;
     using AspCore.Models.Notebook;
-    using BusinessLogic;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
-    using BusinessLogic.Services.Notebook;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using StructureMap;
 
     [Area("Notebook")]
     public class PersonController : Controller
     {
-        private readonly INotebookService _container;
+        private readonly IUnitOfWork _iUnitOfWork;
 
-        public PersonController(INotebookService container)
+        public PersonController(
+            IUnitOfWork iUnitOfWork)
         {
-            _container = container;
+            _iUnitOfWork = iUnitOfWork;
         }
 
         // GET: NotebookController
-        public ActionResult Index()
+        public IActionResult Index()
         {
             var persons = new List<PersonUi>();
-            var t = new UnitOfWork();
-            /*var w = t.GetService<INotebookService>(_container);*/
-            
+            /*var p = _iNotebookService.GetPersons();*/
+            _iUnitOfWork.Create();
+
             return View(persons);
         }
 

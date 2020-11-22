@@ -2,17 +2,21 @@
 {
     using DataAccessLayer.Models.Notebook;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
+    using System;
 
-    public interface IAplicationDbContext
+    public interface IAplicationDbContext : IDisposable
     {
-        DbSet<EmailEntity> EmailEntities { get; set; }
+        DbSet<EmailEntity> Emails { get; set; }
 
-        DbSet<PersonEntity> PersonEntities { get; set; }
+        DbSet<PersonEntity> Persons { get; set; }
 
-        DbSet<PhoneEntity> PhoneEntities { get; set; }
+        DbSet<PhoneEntity> Phones { get; set; }
 
-        DbSet<PhotoEntity> PhotoEntities { get; set; }
+        DbSet<PhotoEntity> Photos { get; set; }
 
-        DbSet<SkypeEntity> SkypeEntities { get; set; }
+        DbSet<SkypeEntity> Skype { get; set; }
+
+        DatabaseFacade Database { get; }
     }
 }

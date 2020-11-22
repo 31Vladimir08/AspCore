@@ -5,6 +5,6 @@
 
     public interface INotebookService : IService
     {
-        List<PersonDto> GetPersonsAsinc();
+        List<PersonDto> GetPersons();
     }
 }
