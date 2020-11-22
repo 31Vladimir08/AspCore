@@ -2,13 +2,15 @@
 {
     using BusinessLogic.Interfaces;
     using DataAccessLayer.Interfaces;
+    using Microsoft.EntityFrameworkCore.Storage;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IAplicationDbContext _iAplicationDbContext;
+
+        private IDbContextTransaction _iTransaction;
+
         public UnitOfWork(
             IAplicationDbContext iAplicationDbContext)
         {
@@ -17,22 +19,30 @@
 
         public void Commit()
         {
-            throw new NotImplementedException();
+            _iAplicationDbContext.SaveChanges();
+            _iTransaction.Commit();
         }
 
-        public void Rollback()
+        public IUnitOfWork CreateTransaction()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Create()
-        {
-            var t = _iAplicationDbContext.Database.BeginTransaction();
+            _iTransaction = _iAplicationDbContext.Database.BeginTransaction();
+            return this;
         }
 
         public void Dispose()
         {
             _iAplicationDbContext.Dispose();
+        }
+
+        public void Rollback()
+        {
+            _iTransaction.Rollback();
+        }
+
+        public T GetService<T>() where T : class, IService
+        {
+            var t = typeof(T);
+            return null;
         }
     }
 }

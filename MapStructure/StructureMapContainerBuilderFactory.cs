@@ -1,8 +1,8 @@
 ﻿namespace MapStructure
 {
+    using System;
     using Microsoft.Extensions.DependencyInjection;
     using StructureMap;
-    using System;
 
     public class StructureMapContainerBuilderFactory : IServiceProviderFactory<Container>
     {

@@ -11,11 +11,14 @@
     public class PersonController : Controller
     {
         private readonly IUnitOfWork _iUnitOfWork;
+        private readonly INotebookService _iNotebookService;
 
         public PersonController(
-            IUnitOfWork iUnitOfWork)
+            IUnitOfWork iUnitOfWork,
+            INotebookService iNotebookService)
         {
             _iUnitOfWork = iUnitOfWork;
+            _iNotebookService = iNotebookService;
         }
 
         // GET: NotebookController
@@ -23,7 +26,11 @@
         {
             var persons = new List<PersonUi>();
             /*var p = _iNotebookService.GetPersons();*/
-            _iUnitOfWork.Create();
+            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+            {
+                var t = _iNotebookService.GetPersons();
+                unitOfWork.Commit();
+            }
 
             return View(persons);
         }

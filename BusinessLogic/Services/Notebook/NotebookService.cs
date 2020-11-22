@@ -6,6 +6,7 @@
     using DataAccessLayer.Interfaces;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     public class NotebookService : INotebookService
@@ -18,6 +19,7 @@
         }
         public List<PersonDto> GetPersons()
         {
+            var t = _iAplicationDbContext.Persons.ToList();
             return null;
         }
     }

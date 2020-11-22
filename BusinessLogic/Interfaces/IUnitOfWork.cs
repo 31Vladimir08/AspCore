@@ -4,7 +4,9 @@
 
     public interface IUnitOfWork : IDisposable
     {
-        void Create();
+        IUnitOfWork CreateTransaction();
+
+        T GetService<T>() where T : class, IService;
 
         void Commit();
 

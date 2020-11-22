@@ -18,5 +18,7 @@
         DbSet<SkypeEntity> Skype { get; set; }
 
         DatabaseFacade Database { get; }
+
+        int SaveChanges();
     }
 }

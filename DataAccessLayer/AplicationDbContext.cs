@@ -3,9 +3,6 @@
     using DataAccessLayer.Interfaces;
     using DataAccessLayer.Models.Notebook;
     using Microsoft.EntityFrameworkCore;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     public class AplicationDbContext : DbContext, IAplicationDbContext
     {
