@@ -6,7 +6,7 @@
 
     public class PersonUi
     {
-        public ulong Id { get; set; }
+        public long Id { get; set; }
 
         public string Surname { get; set; }
 

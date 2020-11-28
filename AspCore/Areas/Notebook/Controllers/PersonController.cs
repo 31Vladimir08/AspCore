@@ -5,6 +5,7 @@
     using AutoMapper;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
+    using BusinessLogic.Models.Notebook;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
@@ -53,16 +54,15 @@
         // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(PersonUi personUi)
         {
-            try
+            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
-                return RedirectToAction(nameof(Index));
+                _iNotebookService.AddPerson(_iMapper.Map<PersonDto>(personUi));
+                unitOfWork.Commit();
             }
-            catch
-            {
-                return View();
-            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: NotebookController/Edit/5

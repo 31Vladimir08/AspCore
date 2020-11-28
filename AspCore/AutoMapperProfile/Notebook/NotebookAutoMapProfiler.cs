@@ -13,7 +13,7 @@
 
         private void CreateProfile()
         {
-            CreateMap<PersonUi, PersonDto>();
+            CreateMap<PersonUi, PersonDto>().ForMember(x => x.Id, opt => opt.Ignore());
             CreateMap<PersonDto, PersonUi>();
         }
     }

@@ -20,7 +20,7 @@
         public void Commit()
         {
             _iAplicationDbContext.SaveChanges();
-            _iTransaction.Commit();
+            _iTransaction.Rollback();
         }
 
         public IUnitOfWork CreateTransaction()

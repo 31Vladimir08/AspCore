@@ -1,11 +1,8 @@
 ﻿namespace BusinessLogic.Services.Notebook
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using AutoMapper;
-    using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
     using BusinessLogic.Models.Notebook;
     using DataAccessLayer.Interfaces;
@@ -14,15 +11,20 @@
     public class NotebookService : INotebookService
     {
         private readonly IAplicationDbContext _iAplicationDbContext;
+        private readonly IMapper _iMapper;
 
-        public NotebookService(IAplicationDbContext iAplicationDbContext)
+        public NotebookService(
+            IAplicationDbContext iAplicationDbContext,
+            IMapper iMapper)
         {
             _iAplicationDbContext = iAplicationDbContext;
+            _iMapper = iMapper;
         }
 
         public void AddPerson(PersonDto personDto)
         {
-            _iAplicationDbContext.Persons.Add(null);
+            var p = _iMapper.Map<PersonEntity>(personDto);
+            _iAplicationDbContext.Persons.Add(p);
         }
 
         public List<PersonDto> GetPersons()

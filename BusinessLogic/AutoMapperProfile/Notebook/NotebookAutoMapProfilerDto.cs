@@ -14,7 +14,7 @@
         private void CreateProfile()
         {
             CreateMap<PersonEntity, PersonDto>();
-            CreateMap<PersonDto, PersonEntity>();
+            CreateMap<PersonDto, PersonEntity>().ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }
