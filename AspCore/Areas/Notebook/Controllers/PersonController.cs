@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using AspCore.Models.Notebook;
+    using AutoMapper;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
     using Microsoft.AspNetCore.Http;
@@ -12,23 +13,25 @@
     {
         private readonly IUnitOfWork _iUnitOfWork;
         private readonly INotebookService _iNotebookService;
+        private readonly IMapper _iMapper;
 
         public PersonController(
             IUnitOfWork iUnitOfWork,
+            IMapper iMapper,
             INotebookService iNotebookService)
         {
             _iUnitOfWork = iUnitOfWork;
             _iNotebookService = iNotebookService;
+            _iMapper = iMapper;
         }
 
         // GET: NotebookController
         public IActionResult Index()
         {
             var persons = new List<PersonUi>();
-            /*var p = _iNotebookService.GetPersons();*/
             using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
-                var t = _iNotebookService.GetPersons();
+                persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons());
                 unitOfWork.Commit();
             }
 

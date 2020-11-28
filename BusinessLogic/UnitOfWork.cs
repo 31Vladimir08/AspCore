@@ -1,9 +1,9 @@
 ﻿namespace BusinessLogic
 {
+    using System;
     using BusinessLogic.Interfaces;
     using DataAccessLayer.Interfaces;
     using Microsoft.EntityFrameworkCore.Storage;
-    using System;
 
     public class UnitOfWork : IUnitOfWork
     {
