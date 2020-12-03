@@ -29,8 +29,7 @@
 
         public List<PersonDto> GetPersons()
         {
-            var t = _iAplicationDbContext.Persons.ToList();
-            return null;
+            return _iMapper.Map<List<PersonDto>>(_iAplicationDbContext.Persons);
         }
     }
 }

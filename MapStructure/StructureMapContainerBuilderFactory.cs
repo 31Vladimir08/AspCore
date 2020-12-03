@@ -1,8 +1,6 @@
-﻿namespace AspCore
+﻿namespace MapStructure
 {
     using System;
-    using AutoMapper;
-    using BusinessLogic.AutoMapperProfile;
     using MapStructure.MapRegistry;
     using Microsoft.Extensions.DependencyInjection;
     using StructureMap;
@@ -13,7 +11,6 @@
 
         public Container CreateBuilder(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(MapperProfileService), typeof(Startup));
             _services = services;
             return new Container();
         }

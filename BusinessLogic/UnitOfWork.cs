@@ -19,8 +19,16 @@
 
         public void Commit()
         {
-            _iAplicationDbContext.SaveChanges();
-            _iTransaction.Rollback();
+            try
+            {
+                _iAplicationDbContext.SaveChanges();
+                _iTransaction.Commit();
+            }
+            catch(Exception ex)
+            {
+                _iTransaction.Rollback();
+                throw ex;
+            }
         }
 
         public IUnitOfWork CreateTransaction()
