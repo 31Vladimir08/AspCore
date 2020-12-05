@@ -1,8 +1,7 @@
-﻿namespace BusinessLogic.Models.Notebook
+﻿namespace BusinessLogic.Models.Notebook.Entities
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
 
     public class PersonDto
     {

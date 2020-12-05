@@ -26,4 +26,8 @@
     <ProjectReference Include="..\MapStructure\MapStructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Notebook\Entities\" />
+  </ItemGroup>
+
 </Project>

@@ -23,7 +23,7 @@
         [MaxLength(200)]
         public string Patronymic { get; set; }
 
-        [DataType(DataType.Date)]
+        [Required]
         public DateTime DateOfBirth { get; set; }
 
         [MaxLength(200)]

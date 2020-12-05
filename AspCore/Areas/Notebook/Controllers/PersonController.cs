@@ -1,11 +1,12 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
     using System.Collections.Generic;
+    using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook;
     using AutoMapper;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
-    using BusinessLogic.Models.Notebook;
+    using BusinessLogic.Models.Notebook.Entities;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
@@ -29,12 +30,12 @@
         // GET: NotebookController
         public IActionResult Index()
         {
-            var persons = new List<PersonUi>();
-            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+            var persons = new PersonViewModel();
+            /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
                 persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons());
             }
-
+            */
             return View(persons);
         }
 

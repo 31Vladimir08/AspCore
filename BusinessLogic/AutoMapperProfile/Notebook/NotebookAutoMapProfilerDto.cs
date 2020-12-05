@@ -1,7 +1,7 @@
 ﻿namespace BusinessLogic.AutoMapperProfile.Notebook
 {
     using AutoMapper;
-    using BusinessLogic.Models.Notebook;
+    using BusinessLogic.Models.Notebook.Entities;
     using DataAccessLayer.Models.Notebook;
 
     public class NotebookAutoMapProfilerDto : Profile
@@ -14,7 +14,16 @@
         private void CreateProfile()
         {
             CreateMap<PersonEntity, PersonDto>();
-            CreateMap<PersonDto, PersonEntity>().ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<PersonDto, PersonEntity>();
+
+            CreateMap<EmailEntity, EmailDto>();
+            CreateMap<EmailDto, EmailEntity>();
+
+            CreateMap<PhoneEntity, PhoneDto>();
+            CreateMap<PhoneDto, PhoneEntity>();
+
+            CreateMap<SkypeEntity, SkypeDto>();
+            CreateMap<SkypeDto, SkypeEntity>();
         }
     }
 }

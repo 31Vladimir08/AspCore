@@ -1,10 +1,10 @@
-﻿namespace BusinessLogic.Models.Notebook
+﻿namespace BusinessLogic.Models.Notebook.Entities
 {
-    public class PhoneDto
+    public class EmailDto
     {
         public long Id { get; set; }
 
-        public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
 
         public long PersonId { get; set; }
 

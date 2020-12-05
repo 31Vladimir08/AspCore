@@ -1,10 +1,10 @@
-﻿namespace BusinessLogic.Models.Notebook
+﻿namespace BusinessLogic.Models.Notebook.Entities
 {
-    public class EmailDto
+    public class SkypeDto
     {
         public long Id { get; set; }
 
-        public string EmailAddress { get; set; }
+        public string SkypeLogin { get; set; }
 
         public long PersonId { get; set; }
 
