@@ -14,12 +14,9 @@
 
         public string Patronymic { get; set; }
 
-        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         public string Organization { get; set; }
-
-        public List<PhotoDto> Photos { get; set; }
 
         public List<EmailDto> Emails { get; set; }
 

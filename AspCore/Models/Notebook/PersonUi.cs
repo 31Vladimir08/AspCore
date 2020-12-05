@@ -19,8 +19,6 @@
 
         public string Organization { get; set; }
 
-        public List<PhotoUi> Photos { get; set; }
-
         public List<EmailUi> Emails { get; set; }
 
         public List<PhoneUi> Phones { get; set; }

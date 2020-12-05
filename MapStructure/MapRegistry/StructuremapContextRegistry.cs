@@ -8,7 +8,7 @@
     {
         public StructuremapContextRegistry()
         {
-            For<IAplicationDbContext>().Use<AplicationDbContext>();
+            For<IAplicationDbContext>().Use<MsSqlDbContext>();
         }
     }
 }

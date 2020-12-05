@@ -33,7 +33,6 @@
             using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
                 persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons());
-                unitOfWork.Commit();
             }
 
             return View(persons);
