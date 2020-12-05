@@ -6,9 +6,9 @@
     public class DateRange
     {
         [DataType(DataType.Date)]
-        public DateTime FromDateTime { get; set; }
+        public DateTime? FromDateTime { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime ToDateTime { get; set; }
+        public DateTime? ToDateTime { get; set; }
     }
 }

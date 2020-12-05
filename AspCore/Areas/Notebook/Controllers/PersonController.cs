@@ -1,6 +1,5 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
-    using System.Collections.Generic;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook;
     using AutoMapper;
@@ -28,15 +27,14 @@
         }
 
         // GET: NotebookController
-        public IActionResult Index()
+        public IActionResult Index(PersonViewModel personViewModel)
         {
-            var persons = new PersonViewModel();
             /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
-                persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons());
+                personViewModel.Persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
             }
             */
-            return View(persons);
+            return View(personViewModel);
         }
 
         // GET: NotebookController/Details/5

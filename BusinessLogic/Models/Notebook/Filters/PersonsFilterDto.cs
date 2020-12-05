@@ -1,6 +1,5 @@
 ﻿namespace BusinessLogic.Models.Notebook.Filters
 {
-
     public class PersonsFilterDto
     {
         public string Surname { get; set; }
