@@ -27,6 +27,15 @@
         }
 
         // GET: NotebookController
+        public IActionResult Index()
+        {
+            PersonViewModel personViewModel = new PersonViewModel();
+            return View(personViewModel);
+        }
+
+        // POST: NotebookController
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Index(PersonViewModel personViewModel)
         {
             /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
