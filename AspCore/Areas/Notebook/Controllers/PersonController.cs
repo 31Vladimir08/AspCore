@@ -60,22 +60,9 @@
         // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PersonUi personUi)
+        public async Task<IActionResult> Create(PersonUi personUi)
         {
-            /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
-            {
-                try
-                {
-                    _iNotebookService.AddPerson(_iMapper.Map<PersonDto>(personUi));
-                    unitOfWork.Commit();
-                }
-                catch (Exception e)
-                {
-                    unitOfWork.Rollback();
-                    throw e;
-                }
-            }*/
-
+            await _iNotebookService.AddPersonAsync(_iMapper.Map<PersonDto>(personUi));
             return RedirectToAction(nameof(Index));
         }
 
