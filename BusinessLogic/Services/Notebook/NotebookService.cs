@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
-    using BusinessLogic.Interfaces.Notebook;
+    using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
     using DataAccessLayer.Interfaces;

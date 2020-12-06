@@ -1,6 +1,7 @@
-﻿namespace BusinessLogic.Interfaces.Notebook
+﻿namespace BusinessLogic.Interfaces.Services.Notebook
 {
     using System.Collections.Generic;
+    using BusinessLogic.Interfaces.Services;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
 

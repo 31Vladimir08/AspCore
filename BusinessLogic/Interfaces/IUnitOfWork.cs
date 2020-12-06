@@ -1,5 +1,6 @@
 ﻿namespace BusinessLogic.Interfaces
 {
+    using BusinessLogic.Interfaces.Services;
     using System;
 
     public interface IUnitOfWork : IDisposable

@@ -6,7 +6,8 @@
     using AspCore.Models.Notebook;
     using AutoMapper;
     using BusinessLogic.Interfaces;
-    using BusinessLogic.Interfaces.Notebook;
+    using BusinessLogic.Interfaces.Logic.Notebook;
+    using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Http;
@@ -15,16 +16,13 @@
     [Area("Notebook")]
     public class PersonController : Controller
     {
-        private readonly IUnitOfWork _iUnitOfWork;
-        private readonly INotebookService _iNotebookService;
+        private readonly INotebookLogic _iNotebookService;
         private readonly IMapper _iMapper;
 
         public PersonController(
-            IUnitOfWork iUnitOfWork,
             IMapper iMapper,
-            INotebookService iNotebookService)
+            INotebookLogic iNotebookService)
         {
-            _iUnitOfWork = iUnitOfWork;
             _iNotebookService = iNotebookService;
             _iMapper = iMapper;
         }
@@ -41,10 +39,7 @@
         [ValidateAntiForgeryToken]
         public IActionResult Index(PersonViewModel personViewModel)
         {
-            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
-            {
-                personViewModel.Persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
-            }
+            personViewModel.Persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
 
             return View(personViewModel);
         }
@@ -66,7 +61,7 @@
         [ValidateAntiForgeryToken]
         public ActionResult Create(PersonUi personUi)
         {
-            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+            /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
                 try
                 {
@@ -78,7 +73,7 @@
                     unitOfWork.Rollback();
                     throw e;
                 }
-            }
+            }*/
 
             return RedirectToAction(nameof(Index));
         }
