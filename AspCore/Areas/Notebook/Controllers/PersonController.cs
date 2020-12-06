@@ -1,11 +1,14 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
+    using System;
+    using System.Collections.Generic;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook;
     using AutoMapper;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
+    using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
@@ -38,11 +41,11 @@
         [ValidateAntiForgeryToken]
         public IActionResult Index(PersonViewModel personViewModel)
         {
-            /*using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
                 personViewModel.Persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
             }
-            */
+
             return View(personViewModel);
         }
 
@@ -65,8 +68,16 @@
         {
             using (var unitOfWork = _iUnitOfWork.CreateTransaction())
             {
-                _iNotebookService.AddPerson(_iMapper.Map<PersonDto>(personUi));
-                unitOfWork.Commit();
+                try
+                {
+                    _iNotebookService.AddPerson(_iMapper.Map<PersonDto>(personUi));
+                    unitOfWork.Commit();
+                }
+                catch (Exception e)
+                {
+                    unitOfWork.Rollback();
+                    throw e;
+                }
             }
 
             return RedirectToAction(nameof(Index));

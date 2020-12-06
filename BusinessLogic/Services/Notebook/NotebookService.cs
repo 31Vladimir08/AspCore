@@ -32,22 +32,22 @@
         public List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
         {
             IQueryable<PersonEntity> query = _iAplicationDbContext.Persons.AsNoTracking();
-            if (string.IsNullOrWhiteSpace(personsFilterDto.Surname))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.Surname))
             {
                 query = query.Where(x => x.Surname == personsFilterDto.Surname);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.Name))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.Name))
             {
                 query = query.Where(x => x.Name == personsFilterDto.Name);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.Patronymic))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.Patronymic))
             {
                 query = query.Where(x => x.Patronymic == personsFilterDto.Patronymic);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.Organization))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.Organization))
             {
                 query = query.Where(x => x.Organization == personsFilterDto.Organization);
             }
@@ -62,33 +62,30 @@
                 query = query.Where(x => x.DateOfBirth <= personsFilterDto.DateOfBirth.ToDateTime);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.Email))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.Email))
             {
                 query = query.Join(
-                    _iAplicationDbContext.Emails.AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email)
-                    .GroupBy(x => x.PersonId).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    _iAplicationDbContext.Emails.AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email).Take(ConstConteyner.MAXCOUNTELEMENTS),
                     p => p.Id,
-                    u => u.Key,
+                    u => u.PersonId,
                     (p, u) => p);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.PhoneNumbers))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.PhoneNumbers))
             {
                 query = query.Join(
-                    _iAplicationDbContext.Phones.AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers)
-                    .GroupBy(x => x.PersonId).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    _iAplicationDbContext.Phones.AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers).Take(ConstConteyner.MAXCOUNTELEMENTS),
                     p => p.Id,
-                    u => u.Key,
+                    u => u.PersonId,
                     (p, u) => p);
             }
 
-            if (string.IsNullOrWhiteSpace(personsFilterDto.SkypeLogin))
+            if (!string.IsNullOrWhiteSpace(personsFilterDto.SkypeLogin))
             {
                 query = query.Join(
-                    _iAplicationDbContext.Skype.AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin)
-                    .GroupBy(x => x.PersonId).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    _iAplicationDbContext.Skype.AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin).Take(ConstConteyner.MAXCOUNTELEMENTS),
                     p => p.Id,
-                    u => u.Key,
+                    u => u.PersonId,
                     (p, u) => p);
             }
 
