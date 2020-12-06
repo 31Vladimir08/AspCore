@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook;
     using AutoMapper;
@@ -37,9 +38,9 @@
         // POST: NotebookController
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(PersonViewModel personViewModel)
+        public async Task<IActionResult> Index(PersonViewModel personViewModel)
         {
-            personViewModel.Persons = _iMapper.Map<List<PersonUi>>(_iNotebookService.GetPersons(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+            personViewModel.Persons = _iMapper.Map<List<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
 
             return View(personViewModel);
         }

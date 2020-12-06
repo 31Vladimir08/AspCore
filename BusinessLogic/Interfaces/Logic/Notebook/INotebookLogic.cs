@@ -5,9 +5,10 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Threading.Tasks;
 
     public interface INotebookLogic
     {
-        List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto);
+        Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto);
     }
 }

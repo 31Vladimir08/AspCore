@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Logic.Notebook;
     using BusinessLogic.Interfaces.Services.Notebook;
@@ -21,12 +22,15 @@
             _iNotebookService = iNotebookService;
         }
 
-        public List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
+        public async Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto)
         {
-            using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+            return await Task.Run(() =>
             {
-                return _iNotebookService.GetPersons(personsFilterDto);
-            }
+                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                {
+                    return _iNotebookService.GetPersons(personsFilterDto);
+                }
+            });
         }
     }
 }
