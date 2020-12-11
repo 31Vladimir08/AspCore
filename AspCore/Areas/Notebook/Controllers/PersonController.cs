@@ -28,7 +28,7 @@
         }
 
         // GET: NotebookController
-        public IActionResult Index()
+        public IActionResult GetPersons()
         {
             PersonViewModel personViewModel = new PersonViewModel();
             return View(personViewModel);
@@ -37,7 +37,7 @@
         // POST: NotebookController
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(PersonViewModel personViewModel)
+        public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
         {
             personViewModel.Persons = _iMapper.Map<List<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
 
@@ -62,7 +62,7 @@
         public async Task<IActionResult> Create(PersonUi personUi)
         {
             await _iNotebookService.AddPersonAsync(_iMapper.Map<PersonDto>(personUi));
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(GetPersons));
         }
 
         // GET: NotebookController/Edit/5
@@ -78,7 +78,7 @@
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(GetPersons));
             }
             catch
             {
@@ -106,7 +106,7 @@
         public async Task<IActionResult> DeleteConfirmed(PersonUi personUi)
         {
             await _iNotebookService.DeletePersonAsync(_iMapper.Map<PersonDto>(personUi));
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(GetPersons));
         }
     }
 }
