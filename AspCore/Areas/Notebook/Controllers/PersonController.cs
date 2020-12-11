@@ -1,6 +1,5 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -8,9 +7,7 @@
     using AspCore.Models.Notebook;
     using AspCore.Models.Notebook.Filters;
     using AutoMapper;
-    using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Logic.Notebook;
-    using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Http;
