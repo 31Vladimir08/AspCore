@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{C9F74C01-0171-4766-B832-B36D663EA10D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapStructure", "MapStructure\MapStructure.csproj", "{6FFCA761-8833-4B24-A20F-8FB66C2E0FB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapStructure", "MapStructure\MapStructure.csproj", "{6FFCA761-8833-4B24-A20F-8FB66C2E0FB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{E11CF9AC-F2A1-4D02-9750-C5723338AB57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{6FFCA761-8833-4B24-A20F-8FB66C2E0FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FFCA761-8833-4B24-A20F-8FB66C2E0FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FFCA761-8833-4B24-A20F-8FB66C2E0FB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E11CF9AC-F2A1-4D02-9750-C5723338AB57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E11CF9AC-F2A1-4D02-9750-C5723338AB57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E11CF9AC-F2A1-4D02-9750-C5723338AB57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E11CF9AC-F2A1-4D02-9750-C5723338AB57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,34 +1,47 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
-    using System;
     using System.Collections.Generic;
-    using AspCore.Models.Notebook;
-    using BusinessLogic;
-    using BusinessLogic.Interfaces;
-    using BusinessLogic.Interfaces.Notebook;
-    using BusinessLogic.Services.Notebook;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AspCore.Areas.Notebook.ViewModels;
+    using AspCore.Models.Notebook.Entities;
+    using AspCore.Models.Notebook.Filters;
+    using AutoMapper;
+    using BusinessLogic.Interfaces.Logic.Notebook;
+    using BusinessLogic.Models.Notebook.Entities;
+    using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using StructureMap;
 
     [Area("Notebook")]
     public class PersonController : Controller
     {
-        private readonly INotebookService _container;
+        private readonly INotebookLogic _iNotebookService;
+        private readonly IMapper _iMapper;
 
-        public PersonController(INotebookService container)
+        public PersonController(
+            IMapper iMapper,
+            INotebookLogic iNotebookService)
         {
-            _container = container;
+            _iNotebookService = iNotebookService;
+            _iMapper = iMapper;
         }
 
         // GET: NotebookController
-        public ActionResult Index()
+        public IActionResult GetPersons()
         {
-            var persons = new List<PersonUi>();
-            var t = new UnitOfWork();
-            /*var w = t.GetService<INotebookService>(_container);*/
-            
-            return View(persons);
+            PersonViewModel personViewModel = new PersonViewModel();
+            return View(personViewModel);
+        }
+
+        // POST: NotebookController
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
+        {
+            personViewModel.Persons = _iMapper.Map<List<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+
+            return View(personViewModel);
         }
 
         // GET: NotebookController/Details/5
@@ -46,16 +59,10 @@
         // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(PersonUi personUi)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _iNotebookService.AddPersonAsync(_iMapper.Map<PersonDto>(personUi));
+            return RedirectToAction(nameof(GetPersons));
         }
 
         // GET: NotebookController/Edit/5
@@ -71,7 +78,7 @@
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(GetPersons));
             }
             catch
             {
@@ -80,24 +87,26 @@
         }
 
         // GET: NotebookController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(long? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var person = _iMapper.Map<List<PersonUi>>(
+                await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(new PersonsFilterUi() { Id = id }))).FirstOrDefault();
+            return View(person);
         }
 
         // POST: NotebookController/Delete/5
         [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(PersonUi personUi)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _iNotebookService.DeletePersonAsync(_iMapper.Map<PersonDto>(personUi));
+            return RedirectToAction(nameof(GetPersons));
         }
     }
 }

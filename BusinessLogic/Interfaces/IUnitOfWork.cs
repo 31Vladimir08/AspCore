@@ -1,12 +1,14 @@
 ﻿namespace BusinessLogic.Interfaces
 {
-    using StructureMap;
+    using BusinessLogic.Interfaces.Services;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
+        IUnitOfWork CreateTransaction();
+
+        T GetService<T>() where T : class, IService;
+
         void Commit();
 
         void Rollback();

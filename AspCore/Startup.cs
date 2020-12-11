@@ -1,5 +1,7 @@
 namespace AspCore
 {
+    using AutoMapper;
+    using BusinessLogic.AutoMapperProfile;
     using MapStructure.MapRegistry;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -7,7 +9,6 @@ namespace AspCore
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using StructureMap;
-    using System;
 
     public class Startup
     {
@@ -21,6 +22,7 @@ namespace AspCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(MapperProfileService), typeof(Startup));
             services.AddControllersWithViews();
         }
 
@@ -28,13 +30,15 @@ namespace AspCore
         // with Autofac. This runs after ConfigureServices so the things
         // here will override registrations made in ConfigureServices.
         // Don't build the container; that gets done for you by the factory.
-        public void ConfigureContainer(Container container)
+        /*public void ConfigureContainer(Container container)
         {
             container.Configure(config =>
             {
-                config.AddRegistry(new StructuremapServiceRegistry());
+                /*config.AddRegistry(new StructuremapServiceRegistry());
+                config.AddRegistry(new StructuremapContextRegistry());
+                config.AddRegistry(new StructuremapUnitOfWorkRegistry());
             });
-        }
+        }*/
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

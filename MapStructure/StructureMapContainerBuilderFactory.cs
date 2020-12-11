@@ -1,8 +1,9 @@
 ﻿namespace MapStructure
 {
+    using System;
+    using MapStructure.MapRegistry;
     using Microsoft.Extensions.DependencyInjection;
     using StructureMap;
-    using System;
 
     public class StructureMapContainerBuilderFactory : IServiceProviderFactory<Container>
     {
@@ -18,6 +19,9 @@
         {
             containerBuilder.Configure(config =>
             {
+                config.AddRegistry(new StructuremapServiceRegistry());
+                config.AddRegistry(new StructuremapContextRegistry());
+                config.AddRegistry(new StructuremapUnitOfWorkRegistry());
                 config.Populate(_services);
             });
             return containerBuilder.GetInstance<IServiceProvider>();
