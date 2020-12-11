@@ -1,4 +1,4 @@
-﻿namespace AspCore.Models.Notebook
+﻿namespace AspCore.Models.Notebook.Entities
 {
     using System;
     using System.Collections.Generic;

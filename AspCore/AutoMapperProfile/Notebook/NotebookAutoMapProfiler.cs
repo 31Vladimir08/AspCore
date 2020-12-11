@@ -1,6 +1,6 @@
 ﻿namespace AspCore.AutoMapperProfile.Notebook
 {
-    using AspCore.Models.Notebook;
+    using AspCore.Models.Notebook.Entities;
     using AspCore.Models.Notebook.Filters;
     using AutoMapper;
     using BusinessLogic.Models.Notebook.Entities;

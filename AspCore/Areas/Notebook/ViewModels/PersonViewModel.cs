@@ -1,7 +1,7 @@
 ﻿namespace AspCore.Areas.Notebook.ViewModels
 {
     using System.Collections.Generic;
-    using AspCore.Models.Notebook;
+    using AspCore.Models.Notebook.Entities;
     using AspCore.Models.Notebook.Filters;
 
     public class PersonViewModel

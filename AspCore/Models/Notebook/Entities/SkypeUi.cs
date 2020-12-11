@@ -1,4 +1,4 @@
-﻿namespace AspCore.Models.Notebook
+﻿namespace AspCore.Models.Notebook.Entities
 {
     public class SkypeUi
     {

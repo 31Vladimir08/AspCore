@@ -1,10 +1,10 @@
-﻿namespace AspCore.Models.Notebook
+﻿namespace AspCore.Models.Notebook.Entities
 {
-    public class PhoneUi
+    public class EmailUi
     {
         public long Id { get; set; }
 
-        public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
 
         public long PersonId { get; set; }
 

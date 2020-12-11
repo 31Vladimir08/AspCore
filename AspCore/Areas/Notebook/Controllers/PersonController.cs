@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AspCore.Areas.Notebook.ViewModels;
-    using AspCore.Models.Notebook;
+    using AspCore.Models.Notebook.Entities;
     using AspCore.Models.Notebook.Filters;
     using AutoMapper;
     using BusinessLogic.Interfaces.Logic.Notebook;
