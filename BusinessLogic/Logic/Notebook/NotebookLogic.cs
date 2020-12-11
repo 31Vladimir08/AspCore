@@ -42,6 +42,26 @@
             });
         }
 
+        public async Task DeletePersonAsync(PersonDto personDto)
+        {
+            await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                {
+                    try
+                    {
+                        _iNotebookService.DeletePerson(personDto);
+                        unitOfWork.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        unitOfWork.Rollback();
+                        throw e;
+                    }
+                }
+            });
+        }
+
         public async Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto)
         {
             return await Task.Run(() =>

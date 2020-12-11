@@ -10,5 +10,7 @@
         Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto);
 
         Task AddPersonAsync(PersonDto personDto);
+
+        Task DeletePersonAsync(PersonDto personDto);
     }
 }

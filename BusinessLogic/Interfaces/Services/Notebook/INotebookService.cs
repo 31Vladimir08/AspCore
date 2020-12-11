@@ -10,5 +10,7 @@
         List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto);
 
         void AddPerson(PersonDto personDto);
+
+        void DeletePerson(PersonDto personDto);
     }
 }

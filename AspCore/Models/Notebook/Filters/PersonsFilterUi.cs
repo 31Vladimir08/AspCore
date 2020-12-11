@@ -10,6 +10,8 @@
             DateOfBirth = new DateRange();
         }
 
+        public long? Id { get; set; }
+
         [MaxLength(200)]
         public string Surname { get; set; }
 

@@ -29,9 +29,20 @@
             _iAplicationDbContext.Persons.Add(_iMapper.Map<PersonEntity>(personDto));
         }
 
+        public void DeletePerson(PersonDto personDto)
+        {
+            _iAplicationDbContext.Persons.Remove(_iMapper.Map<PersonEntity>(personDto));
+        }
+
         public List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
         {
             IQueryable<PersonEntity> query = _iAplicationDbContext.Persons.AsNoTracking();
+
+            if (personsFilterDto.Id != null && personsFilterDto.Id > 0)
+            {
+                query = query.Where(x => x.Id == personsFilterDto.Id);
+            }
+
             if (!string.IsNullOrWhiteSpace(personsFilterDto.Surname))
             {
                 query = query.Where(x => x.Surname == personsFilterDto.Surname);
@@ -64,28 +75,34 @@
 
             if (!string.IsNullOrWhiteSpace(personsFilterDto.Email))
             {
+                var queryEmail = _iAplicationDbContext.Emails.AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email)
+                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
                 query = query.Join(
-                    _iAplicationDbContext.Emails.AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    queryEmail,
                     p => p.Id,
-                    u => u.PersonId,
+                    u => u,
                     (p, u) => p);
             }
 
             if (!string.IsNullOrWhiteSpace(personsFilterDto.PhoneNumbers))
             {
+                var queryPhone = _iAplicationDbContext.Phones.AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers)
+                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
                 query = query.Join(
-                    _iAplicationDbContext.Phones.AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    queryPhone,
                     p => p.Id,
-                    u => u.PersonId,
+                    u => u,
                     (p, u) => p);
             }
 
             if (!string.IsNullOrWhiteSpace(personsFilterDto.SkypeLogin))
             {
+                var querySkype = _iAplicationDbContext.Skype.AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin)
+                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
                 query = query.Join(
-                    _iAplicationDbContext.Skype.AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin).Take(ConstConteyner.MAXCOUNTELEMENTS),
+                    querySkype,
                     p => p.Id,
-                    u => u.PersonId,
+                    u => u,
                     (p, u) => p);
             }
 

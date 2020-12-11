@@ -2,9 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook;
+    using AspCore.Models.Notebook.Filters;
     using AutoMapper;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Logic.Notebook;
@@ -88,24 +90,26 @@
         }
 
         // GET: NotebookController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(long? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var person = _iMapper.Map<List<PersonUi>>(
+                await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(new PersonsFilterUi() { Id = id }))).FirstOrDefault();
+            return View(person);
         }
 
         // POST: NotebookController/Delete/5
         [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(PersonUi personUi)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _iNotebookService.DeletePersonAsync(_iMapper.Map<PersonDto>(personUi));
+            return RedirectToAction(nameof(Index));
         }
     }
 }
