@@ -7,10 +7,12 @@
 
     public interface INotebookLogic
     {
-        Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto);
+        Task<IEnumerable<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto);
 
-        Task AddPersonAsync(PersonDto personDto);
+        Task<PersonDto> AddPersonAsync(PersonDto personDto);
 
-        Task DeletePersonAsync(PersonDto personDto);
+        Task<PersonDto> DeletePersonAsync(PersonDto personDto);
+
+        Task<PersonDto> UpdatePersonAsync(PersonDto personDto);
     }
 }

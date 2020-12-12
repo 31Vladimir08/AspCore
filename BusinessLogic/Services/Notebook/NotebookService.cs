@@ -24,17 +24,19 @@
             _iMapper = iMapper;
         }
 
-        public void AddPerson(PersonDto personDto)
+        public PersonDto AddPerson(PersonDto personDto)
         {
-            _iAplicationDbContext.Persons.Add(_iMapper.Map<PersonEntity>(personDto));
+            var person = _iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Add(_iMapper.Map<PersonEntity>(personDto)).Entity);
+            return person;
         }
 
-        public void DeletePerson(PersonDto personDto)
+        public PersonDto DeletePerson(PersonDto personDto)
         {
-            _iAplicationDbContext.Persons.Remove(_iMapper.Map<PersonEntity>(personDto));
+            var person =_iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Remove(_iMapper.Map<PersonEntity>(personDto)).Entity);
+            return person;
         }
 
-        public List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
+        public IEnumerable<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
         {
             IQueryable<PersonEntity> query = _iAplicationDbContext.Persons.AsNoTracking();
 
@@ -107,7 +109,15 @@
             }
 
             query.Take(ConstConteyner.MAXCOUNTELEMENTS);
-            return _iMapper.Map<List<PersonDto>>(query.ToList());
+
+            var persons = _iMapper.Map<IEnumerable<PersonDto>>(query);
+            return persons;
+        }
+
+        public PersonDto UpdatePerson(PersonDto personDto)
+        {
+            var person = _iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Update(_iMapper.Map<PersonEntity>(personDto)).Entity);
+            return person;
         }
     }
 }

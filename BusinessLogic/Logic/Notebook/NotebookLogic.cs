@@ -22,16 +22,17 @@
             _iNotebookService = iNotebookService;
         }
 
-        public async Task AddPersonAsync(PersonDto personDto)
+        public async Task<PersonDto> AddPersonAsync(PersonDto personDto)
         {
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
                 using (var unitOfWork = _iUnitOfWork.CreateTransaction())
                 {
                     try
                     {
-                        _iNotebookService.AddPerson(personDto);
+                        var person = _iNotebookService.AddPerson(personDto);
                         unitOfWork.Commit();
+                        return person;
                     }
                     catch (Exception e)
                     {
@@ -42,16 +43,17 @@
             });
         }
 
-        public async Task DeletePersonAsync(PersonDto personDto)
+        public async Task<PersonDto> DeletePersonAsync(PersonDto personDto)
         {
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
                 using (var unitOfWork = _iUnitOfWork.CreateTransaction())
                 {
                     try
                     {
-                        _iNotebookService.DeletePerson(personDto);
+                        var person = _iNotebookService.DeletePerson(personDto);
                         unitOfWork.Commit();
+                        return person;
                     }
                     catch (Exception e)
                     {
@@ -62,13 +64,34 @@
             });
         }
 
-        public async Task<List<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto)
+        public async Task<IEnumerable<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto)
         {
             return await Task.Run(() =>
             {
                 using (var unitOfWork = _iUnitOfWork.CreateTransaction())
                 {
                     return _iNotebookService.GetPersons(personsFilterDto);
+                }
+            });
+        }
+
+        public async Task<PersonDto> UpdatePersonAsync(PersonDto personDto)
+        {
+            return await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                {
+                    try
+                    {
+                        var person = _iNotebookService.UpdatePerson(personDto);
+                        unitOfWork.Commit();
+                        return person;
+                    }
+                    catch (Exception e)
+                    {
+                        unitOfWork.Rollback();
+                        throw e;
+                    }
                 }
             });
         }

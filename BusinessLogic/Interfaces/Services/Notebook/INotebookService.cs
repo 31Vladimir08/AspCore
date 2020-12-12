@@ -7,10 +7,12 @@
 
     public interface INotebookService : IService
     {
-        List<PersonDto> GetPersons(PersonsFilterDto personsFilterDto);
+        IEnumerable<PersonDto> GetPersons(PersonsFilterDto personsFilterDto);
 
-        void AddPerson(PersonDto personDto);
+        PersonDto AddPerson(PersonDto personDto);
 
-        void DeletePerson(PersonDto personDto);
+        PersonDto DeletePerson(PersonDto personDto);
+
+        PersonDto UpdatePerson(PersonDto personDto);
     }
 }

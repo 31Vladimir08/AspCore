@@ -39,7 +39,7 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
         {
-            personViewModel.Persons = _iMapper.Map<List<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+            personViewModel.Persons = _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
 
             return View(personViewModel);
         }
@@ -66,24 +66,34 @@
         }
 
         // GET: NotebookController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(long? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var person = _iMapper.Map<List<PersonUi>>(
+                await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(new PersonsFilterUi() { Id = id }))).FirstOrDefault();
+            return View(person);
         }
 
         // POST: NotebookController/Edit/5
         [HttpPost]
+        [ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> EditConfirmed(PersonUi personUi)
         {
-            try
+            await _iNotebookService.UpdatePersonAsync(_iMapper.Map<PersonDto>(personUi));
+            return RedirectToAction(nameof(GetPersons));
+            /*try
             {
                 return RedirectToAction(nameof(GetPersons));
             }
             catch
             {
                 return View();
-            }
+            }*/
         }
 
         // GET: NotebookController/Delete/5
