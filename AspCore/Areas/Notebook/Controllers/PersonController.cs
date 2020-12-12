@@ -44,12 +44,6 @@
             return View(personViewModel);
         }
 
-        // GET: NotebookController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: NotebookController/Create
         public ActionResult Create()
         {
@@ -68,7 +62,7 @@
         // GET: NotebookController/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
@@ -99,7 +93,7 @@
         // GET: NotebookController/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
