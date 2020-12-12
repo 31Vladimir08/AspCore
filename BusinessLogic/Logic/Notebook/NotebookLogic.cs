@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Linq;
     using System.Threading.Tasks;
     using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Logic.Notebook;
@@ -60,6 +62,27 @@
                         unitOfWork.Rollback();
                         throw e;
                     }
+                }
+            });
+        }
+
+        public async Task<dynamic> GetDetalsAsync(long personId)
+        {
+            return await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                {
+                    var person = _iNotebookService.GetPersons(new PersonsFilterDto() { Id = personId }).FirstOrDefault();
+                    var emails = _iNotebookService.GetEmails(personId);
+                    var phones = _iNotebookService.GetPhones(personId);
+                    var skype = _iNotebookService.GetSkype(personId);
+                    dynamic result = new ExpandoObject();
+                    result.Person = person;
+                    result.Emails = emails;
+                    result.Phones = phones;
+                    result.Skype = skype;
+
+                    return result;
                 }
             });
         }

@@ -8,12 +8,22 @@
         public DetailsViewModel()
         {
             Person = new PersonUi();
+            Email = new EmailUi();
+            Phone = new PhoneUi();
+            SkypePerson = new SkypeUi();
+
             Emails = new List<EmailUi>();
             Phones = new List<PhoneUi>();
             Skype = new List<SkypeUi>();
         }
 
         public PersonUi Person { get; set; }
+
+        public EmailUi Email { get; set; }
+
+        public PhoneUi Phone { get; set; }
+
+        public SkypeUi SkypePerson { get; set; }
 
         public IEnumerable<EmailUi> Emails { get; set; }
 

@@ -36,6 +36,12 @@
             return person;
         }
 
+        public IEnumerable<EmailDto> GetEmails(long personId)
+        {
+            var emails = _iMapper.Map<IEnumerable<EmailDto>>(_iAplicationDbContext.Emails.Where(x => x.PersonId == personId));
+            return emails;
+        }
+
         public IEnumerable<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
         {
             IQueryable<PersonEntity> query = _iAplicationDbContext.Persons.AsNoTracking();
@@ -112,6 +118,18 @@
 
             var persons = _iMapper.Map<IEnumerable<PersonDto>>(query);
             return persons;
+        }
+
+        public IEnumerable<PhoneDto> GetPhones(long personId)
+        {
+            var phones = _iMapper.Map<IEnumerable<PhoneDto>>(_iAplicationDbContext.Phones.Where(x => x.PersonId == personId));
+            return phones;
+        }
+
+        public IEnumerable<SkypeDto> GetSkype(long personId)
+        {
+            var skype = _iMapper.Map<IEnumerable<SkypeDto>>(_iAplicationDbContext.Skype.Where(x => x.PersonId == personId));
+            return skype;
         }
 
         public PersonDto UpdatePerson(PersonDto personDto)

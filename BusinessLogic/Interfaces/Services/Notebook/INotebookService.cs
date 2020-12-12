@@ -14,5 +14,11 @@
         PersonDto DeletePerson(PersonDto personDto);
 
         PersonDto UpdatePerson(PersonDto personDto);
+
+        IEnumerable<PhoneDto> GetPhones(long personId);
+
+        IEnumerable<EmailDto> GetEmails(long personId);
+
+        IEnumerable<SkypeDto> GetSkype(long personId);
     }
 }

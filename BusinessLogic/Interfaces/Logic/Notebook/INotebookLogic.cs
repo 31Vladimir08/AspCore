@@ -14,5 +14,7 @@
         Task<PersonDto> DeletePersonAsync(PersonDto personDto);
 
         Task<PersonDto> UpdatePersonAsync(PersonDto personDto);
+
+        Task<dynamic> GetDetalsAsync(long personId);
     }
 }
