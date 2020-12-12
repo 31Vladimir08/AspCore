@@ -62,7 +62,7 @@
         // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PersonUi personUi)
+        public async Task<IActionResult> Create(long? id, DetailsViewModel detailsVM)
         {
             //await _iNotebookLogic.AddPersonAsync(_iMapper.Map<PersonDto>(personUi));
             return RedirectToAction(nameof(Details));

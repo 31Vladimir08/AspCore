@@ -16,5 +16,7 @@
         Task<PersonDto> UpdatePersonAsync(PersonDto personDto);
 
         Task<dynamic> GetDetalsAsync(long personId);
+
+        Task<dynamic> AddDetalsForPersonAsync(long personId);
     }
 }

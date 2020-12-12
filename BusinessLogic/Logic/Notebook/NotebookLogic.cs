@@ -24,6 +24,11 @@
             _iNotebookService = iNotebookService;
         }
 
+        public async Task<dynamic> AddDetalsForPersonAsync(long personId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<PersonDto> AddPersonAsync(PersonDto personDto)
         {
             return await Task.Run(() =>
