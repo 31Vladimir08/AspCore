@@ -5,23 +5,23 @@
     using System.Dynamic;
     using System.Linq;
     using System.Threading.Tasks;
-    using BusinessLogic.Interfaces;
     using BusinessLogic.Interfaces.Logic.Notebook;
     using BusinessLogic.Interfaces.Services.Notebook;
+    using BusinessLogic.Interfaces.UnitOfWork;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
 
     public class NotebookLogic : INotebookLogic
     {
-        private readonly IUnitOfWork _iUnitOfWork;
-        private readonly INotebookService _iNotebookService;
+        private readonly IUnitOfWorkFactory _iUnitOfWorkFactory;
+        private readonly INotebookService _notebookService;
 
         public NotebookLogic(
-            IUnitOfWork iUnitOfWork,
-            INotebookService iNotebookService)
+            IUnitOfWorkFactory iUnitOfWorkFactory,
+            INotebookService notebookService)
         {
-            _iUnitOfWork = iUnitOfWork;
-            _iNotebookService = iNotebookService;
+            _iUnitOfWorkFactory = iUnitOfWorkFactory;
+            _notebookService = notebookService;
         }
 
         public async Task<dynamic> AddDetalsForPersonAsync(long personId)
@@ -33,11 +33,11 @@
         {
             return await Task.Run(() =>
             {
-                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     try
                     {
-                        var person = _iNotebookService.AddPerson(personDto);
+                        var person = _notebookService.AddPerson(personDto);
                         unitOfWork.Commit();
                         return person;
                     }
@@ -54,11 +54,11 @@
         {
             return await Task.Run(() =>
             {
-                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     try
                     {
-                        var person = _iNotebookService.DeletePerson(personDto);
+                        var person = _notebookService.DeletePerson(personDto);
                         unitOfWork.Commit();
                         return person;
                     }
@@ -75,12 +75,12 @@
         {
             return await Task.Run(() =>
             {
-                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
-                    var person = _iNotebookService.GetPersons(new PersonsFilterDto() { Id = personId }).FirstOrDefault();
-                    var emails = _iNotebookService.GetEmails(personId);
-                    var phones = _iNotebookService.GetPhones(personId);
-                    var skype = _iNotebookService.GetSkype(personId);
+                    var person = _notebookService.GetPersons(new PersonsFilterDto() { Id = personId }).FirstOrDefault();
+                    var emails = _notebookService.GetEmails(personId);
+                    var phones = _notebookService.GetPhones(personId);
+                    var skype = _notebookService.GetSkype(personId);
                     dynamic result = new ExpandoObject();
                     result.Person = person;
                     result.Emails = emails;
@@ -96,9 +96,9 @@
         {
             return await Task.Run(() =>
             {
-                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
-                    return _iNotebookService.GetPersons(personsFilterDto);
+                    return _notebookService.GetPersons(personsFilterDto);
                 }
             });
         }
@@ -107,11 +107,11 @@
         {
             return await Task.Run(() =>
             {
-                using (var unitOfWork = _iUnitOfWork.CreateTransaction())
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     try
                     {
-                        var person = _iNotebookService.UpdatePerson(personDto);
+                        var person = _notebookService.UpdatePerson(personDto);
                         unitOfWork.Commit();
                         return person;
                     }
