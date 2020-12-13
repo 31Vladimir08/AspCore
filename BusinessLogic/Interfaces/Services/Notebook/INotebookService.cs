@@ -11,6 +11,12 @@
 
         PersonDto AddPerson(PersonDto personDto);
 
+        EmailDto AddEmail(EmailDto emailDto);
+
+        PhoneDto AddPhone(PhoneDto phoneDto);
+
+        SkypeDto AddSkype(SkypeDto skypeDto);
+
         PersonDto DeletePerson(PersonDto personDto);
 
         PersonDto UpdatePerson(PersonDto personDto);

@@ -24,10 +24,28 @@
             _iMapper = iMapper;
         }
 
+        public EmailDto AddEmail(EmailDto emailDto)
+        {
+            var email = _iMapper.Map<EmailDto>(_iAplicationDbContext.Emails.Add(_iMapper.Map<EmailEntity>(emailDto)).Entity);
+            return email;
+        }
+
         public PersonDto AddPerson(PersonDto personDto)
         {
             var person = _iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Add(_iMapper.Map<PersonEntity>(personDto)).Entity);
             return person;
+        }
+
+        public PhoneDto AddPhone(PhoneDto phoneDto)
+        {
+            var phone = _iMapper.Map<PhoneDto>(_iAplicationDbContext.Phones.Add(_iMapper.Map<PhoneEntity>(phoneDto)).Entity);
+            return phone;
+        }
+
+        public SkypeDto AddSkype(SkypeDto skypeDto)
+        {
+            var skype = _iMapper.Map<SkypeDto>(_iAplicationDbContext.Skype.Add(_iMapper.Map<SkypeEntity>(skypeDto)).Entity);
+            return skype;
         }
 
         public PersonDto DeletePerson(PersonDto personDto)
