@@ -1,30 +1,26 @@
 ﻿namespace BusinessLogic.Interfaces.Services.Notebook
 {
     using System.Collections.Generic;
-    using BusinessLogic.Interfaces.Services;
+    using System.Threading.Tasks;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
 
     public interface INotebookService : IService
     {
-        IEnumerable<PersonDto> GetPersons(PersonsFilterDto personsFilterDto);
+        Task<IEnumerable<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto);
 
-        PersonDto AddPerson(PersonDto personDto);
+        Task<PersonDto> AddPersonAsync(PersonDto personDto);
 
-        EmailDto AddEmail(EmailDto emailDto);
+        Task<PersonDto> DeletePersonAsync(PersonDto personDto);
 
-        PhoneDto AddPhone(PhoneDto phoneDto);
+        Task<PersonDto> UpdatePersonAsync(PersonDto personDto);
 
-        SkypeDto AddSkype(SkypeDto skypeDto);
+        Task<(
+            Task<PersonDto> person,
+            Task<IEnumerable<EmailDto>> emails,
+            Task<IEnumerable<PhoneDto>> phones,
+            Task<IEnumerable<SkypeDto>> skype)> GetDetalsAsync(long personId);
 
-        PersonDto DeletePerson(PersonDto personDto);
-
-        PersonDto UpdatePerson(PersonDto personDto);
-
-        IEnumerable<PhoneDto> GetPhones(long personId);
-
-        IEnumerable<EmailDto> GetEmails(long personId);
-
-        IEnumerable<SkypeDto> GetSkype(long personId);
+        Task<dynamic> AddDetalsForPersonAsync(long personId);
     }
 }

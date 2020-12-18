@@ -5,20 +5,20 @@
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
     using AutoMapper;
-    using BusinessLogic.Interfaces.Logic.Notebook;
+    using BusinessLogic.Interfaces.Services.Notebook;
     using Microsoft.AspNetCore.Mvc;
 
     [Area("Notebook")]
     public class DetailsController : Controller
     {
-        private readonly INotebookLogic _iNotebookLogic;
+        private readonly INotebookService _iNotebookService;
         private readonly IMapper _iMapper;
 
         public DetailsController(
             IMapper iMapper,
-            INotebookLogic iNotebookLogic)
+            INotebookService iNotebookService)
         {
-            _iNotebookLogic = iNotebookLogic;
+            _iNotebookService = iNotebookService;
             _iMapper = iMapper;
         }
 
@@ -30,12 +30,32 @@
             }
 
             DetailsViewModel detailsViewModel = new DetailsViewModel();
-            var detals = await _iNotebookLogic.GetDetalsAsync((long)id);
-
-            detailsViewModel.Person = _iMapper.Map<PersonUi>(detals.Person);
-            detailsViewModel.Emails = _iMapper.Map<IEnumerable<EmailUi>>(detals.Emails);
-            detailsViewModel.Phones = _iMapper.Map<IEnumerable<PhoneUi>>(detals.Phones);
-            detailsViewModel.Skype = _iMapper.Map<IEnumerable<SkypeUi>>(detals.Skype);
+            var detals = await _iNotebookService.GetDetalsAsync((long)id);
+            var personUi = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<PersonUi>(detals.person.Result);
+                });
+            var emailsUi = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<IEnumerable<EmailUi>>(detals.emails.Result);
+                });
+            var phonesUi = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<IEnumerable<PhoneUi>>(detals.phones.Result);
+                });
+            var skypeUi = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<IEnumerable<SkypeUi>>(detals.skype.Result);
+                });
+            await Task.WhenAll(personUi, emailsUi, phonesUi, skypeUi);
+            detailsViewModel.Person = personUi.Result;
+            detailsViewModel.Emails = emailsUi.Result;
+            detailsViewModel.Phones = phonesUi.Result;
+            detailsViewModel.Skype = skypeUi.Result;
             return View(detailsViewModel);
         }
 

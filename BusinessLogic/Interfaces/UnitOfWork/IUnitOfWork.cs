@@ -1,11 +1,11 @@
 ﻿namespace BusinessLogic.Interfaces.UnitOfWork
 {
-    using BusinessLogic.Interfaces.Services;
+    using DataAccessLayer.Interfaces;
     using System;
 
     public interface IUnitOfWork : IDisposable
     {
-        T GetService<T>() where T : class, IService;
+        IAplicationDbContext Context { get; }
 
         void Commit();
 

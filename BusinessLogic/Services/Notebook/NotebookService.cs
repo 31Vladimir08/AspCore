@@ -1,159 +1,214 @@
 ﻿namespace BusinessLogic.Services.Notebook
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using AutoMapper;
     using BusinessLogic.Interfaces.Services.Notebook;
+    using BusinessLogic.Interfaces.UnitOfWork;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
-    using DataAccessLayer.Interfaces;
     using DataAccessLayer.Models.Notebook;
     using Microsoft.EntityFrameworkCore;
     using Resources;
 
     public class NotebookService : INotebookService
     {
-        private readonly IAplicationDbContext _iAplicationDbContext;
+        private readonly IUnitOfWorkFactory _iUnitOfWorkFactory;
         private readonly IMapper _iMapper;
 
         public NotebookService(
-            IAplicationDbContext iAplicationDbContext,
+            IUnitOfWorkFactory iUnitOfWorkFactory,
             IMapper iMapper)
         {
-            _iAplicationDbContext = iAplicationDbContext;
+            _iUnitOfWorkFactory = iUnitOfWorkFactory;
             _iMapper = iMapper;
         }
 
-        public EmailDto AddEmail(EmailDto emailDto)
+        public async Task<dynamic> AddDetalsForPersonAsync(long personId)
         {
-            var email = _iMapper.Map<EmailDto>(_iAplicationDbContext.Emails.Add(_iMapper.Map<EmailEntity>(emailDto)).Entity);
-            return email;
+            throw new NotImplementedException();
         }
 
-        public PersonDto AddPerson(PersonDto personDto)
+        public async Task<PersonDto> AddPersonAsync(PersonDto personDto)
         {
-            var person = _iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Add(_iMapper.Map<PersonEntity>(personDto)).Entity);
-            return person;
+            return await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    var person = _iMapper.Map<PersonDto>(
+                            unitOfWork.Context.Set<PersonEntity>().Add(_iMapper.Map<PersonEntity>(personDto)).Entity);
+                    unitOfWork.Commit();
+                    return person;
+                }
+            });
         }
 
-        public PhoneDto AddPhone(PhoneDto phoneDto)
+        public async Task<PersonDto> DeletePersonAsync(PersonDto personDto)
         {
-            var phone = _iMapper.Map<PhoneDto>(_iAplicationDbContext.Phones.Add(_iMapper.Map<PhoneEntity>(phoneDto)).Entity);
-            return phone;
+            return await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    var person = _iMapper.Map<PersonDto>(
+                            unitOfWork.Context.Set<PersonEntity>().Remove(_iMapper.Map<PersonEntity>(personDto)).Entity);
+                    unitOfWork.Commit();
+                    return person;
+                }
+            });
         }
 
-        public SkypeDto AddSkype(SkypeDto skypeDto)
+        public async Task<(
+            Task<PersonDto> person,
+            Task<IEnumerable<EmailDto>> emails,
+            Task<IEnumerable<PhoneDto>> phones,
+            Task<IEnumerable<SkypeDto>> skype)> GetDetalsAsync(long personId)
         {
-            var skype = _iMapper.Map<SkypeDto>(_iAplicationDbContext.Skype.Add(_iMapper.Map<SkypeEntity>(skypeDto)).Entity);
-            return skype;
+            var person = Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    return _iMapper.Map<PersonDto>(
+                            unitOfWork.Context.Set<PersonEntity>().Find(personId));
+                }
+            });
+
+            var emails = Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    return _iMapper.Map<IEnumerable<EmailDto>>(
+                            unitOfWork.Context.Set<EmailEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                }
+            });
+
+            var phones = Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    return _iMapper.Map<IEnumerable<PhoneDto>>(
+                            unitOfWork.Context.Set<PhoneEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                }
+            });
+
+            var skype = Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    return _iMapper.Map<IEnumerable<SkypeDto>>(
+                            unitOfWork.Context.Set<SkypeEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                }
+            });
+
+            await Task.WhenAll(person, emails, phones, skype);
+            var result =
+                (
+                    person: person,
+                    emails: emails,
+                    phones: phones,
+                    skype: skype
+                );
+
+            return result;
         }
 
-        public PersonDto DeletePerson(PersonDto personDto)
+        public async Task<IEnumerable<PersonDto>> GetPersonsAsync(PersonsFilterDto personsFilterDto)
         {
-            var person =_iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Remove(_iMapper.Map<PersonEntity>(personDto)).Entity);
-            return person;
+            return await Task.Run(() =>
+            {
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    IQueryable<PersonEntity> query = unitOfWork.Context.Set<PersonEntity>().AsNoTracking();
+
+                    if (personsFilterDto.Id != null && personsFilterDto.Id > 0)
+                    {
+                        query = query.Where(x => x.Id == personsFilterDto.Id);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.Surname))
+                    {
+                        query = query.Where(x => x.Surname == personsFilterDto.Surname);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.Name))
+                    {
+                        query = query.Where(x => x.Name == personsFilterDto.Name);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.Patronymic))
+                    {
+                        query = query.Where(x => x.Patronymic == personsFilterDto.Patronymic);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.Organization))
+                    {
+                        query = query.Where(x => x.Organization == personsFilterDto.Organization);
+                    }
+
+                    if (personsFilterDto.DateOfBirth?.FromDateTime != null)
+                    {
+                        query = query.Where(x => x.DateOfBirth >= personsFilterDto.DateOfBirth.FromDateTime);
+                    }
+
+                    if (personsFilterDto.DateOfBirth?.ToDateTime != null)
+                    {
+                        query = query.Where(x => x.DateOfBirth <= personsFilterDto.DateOfBirth.ToDateTime);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.Email))
+                    {
+                        var queryEmail = unitOfWork.Context.Set<EmailEntity>().AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email)
+                            .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
+                        query = query.Join(
+                            queryEmail,
+                            p => p.Id,
+                            u => u,
+                            (p, u) => p);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.PhoneNumbers))
+                    {
+                        var queryPhone = unitOfWork.Context.Set<PhoneEntity>().AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers)
+                            .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
+                        query = query.Join(
+                            queryPhone,
+                            p => p.Id,
+                            u => u,
+                            (p, u) => p);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(personsFilterDto.SkypeLogin))
+                    {
+                        var querySkype = unitOfWork.Context.Set<SkypeEntity>().AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin)
+                            .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
+                        query = query.Join(
+                            querySkype,
+                            p => p.Id,
+                            u => u,
+                            (p, u) => p);
+                    }
+
+                    query.Take(ConstConteyner.MAXCOUNTELEMENTS);
+
+                    var persons = _iMapper.Map<IEnumerable<PersonDto>>(query);
+                    return persons;
+                }
+            });
         }
 
-        public IEnumerable<EmailDto> GetEmails(long personId)
+        public async Task<PersonDto> UpdatePersonAsync(PersonDto personDto)
         {
-            var emails = _iMapper.Map<IEnumerable<EmailDto>>(_iAplicationDbContext.Emails.Where(x => x.PersonId == personId));
-            return emails;
-        }
-
-        public IEnumerable<PersonDto> GetPersons(PersonsFilterDto personsFilterDto)
-        {
-            IQueryable<PersonEntity> query = _iAplicationDbContext.Persons.AsNoTracking();
-
-            if (personsFilterDto.Id != null && personsFilterDto.Id > 0)
+            return await Task.Run(() =>
             {
-                query = query.Where(x => x.Id == personsFilterDto.Id);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.Surname))
-            {
-                query = query.Where(x => x.Surname == personsFilterDto.Surname);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.Name))
-            {
-                query = query.Where(x => x.Name == personsFilterDto.Name);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.Patronymic))
-            {
-                query = query.Where(x => x.Patronymic == personsFilterDto.Patronymic);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.Organization))
-            {
-                query = query.Where(x => x.Organization == personsFilterDto.Organization);
-            }
-
-            if (personsFilterDto.DateOfBirth?.FromDateTime != null)
-            {
-                query = query.Where(x => x.DateOfBirth >= personsFilterDto.DateOfBirth.FromDateTime);
-            }
-
-            if (personsFilterDto.DateOfBirth?.ToDateTime != null)
-            {
-                query = query.Where(x => x.DateOfBirth <= personsFilterDto.DateOfBirth.ToDateTime);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.Email))
-            {
-                var queryEmail = _iAplicationDbContext.Emails.AsNoTracking().Where(x => x.EmailAddress == personsFilterDto.Email)
-                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
-                query = query.Join(
-                    queryEmail,
-                    p => p.Id,
-                    u => u,
-                    (p, u) => p);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.PhoneNumbers))
-            {
-                var queryPhone = _iAplicationDbContext.Phones.AsNoTracking().Where(x => x.PhoneNumber == personsFilterDto.PhoneNumbers)
-                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
-                query = query.Join(
-                    queryPhone,
-                    p => p.Id,
-                    u => u,
-                    (p, u) => p);
-            }
-
-            if (!string.IsNullOrWhiteSpace(personsFilterDto.SkypeLogin))
-            {
-                var querySkype = _iAplicationDbContext.Skype.AsNoTracking().Where(x => x.SkypeLogin == personsFilterDto.SkypeLogin)
-                    .GroupBy(x => x.PersonId).Select(x => x.Key).Take(ConstConteyner.MAXCOUNTELEMENTS);
-                query = query.Join(
-                    querySkype,
-                    p => p.Id,
-                    u => u,
-                    (p, u) => p);
-            }
-
-            query.Take(ConstConteyner.MAXCOUNTELEMENTS);
-
-            var persons = _iMapper.Map<IEnumerable<PersonDto>>(query);
-            return persons;
-        }
-
-        public IEnumerable<PhoneDto> GetPhones(long personId)
-        {
-            var phones = _iMapper.Map<IEnumerable<PhoneDto>>(_iAplicationDbContext.Phones.Where(x => x.PersonId == personId));
-            return phones;
-        }
-
-        public IEnumerable<SkypeDto> GetSkype(long personId)
-        {
-            var skype = _iMapper.Map<IEnumerable<SkypeDto>>(_iAplicationDbContext.Skype.Where(x => x.PersonId == personId));
-            return skype;
-        }
-
-        public PersonDto UpdatePerson(PersonDto personDto)
-        {
-            var person = _iMapper.Map<PersonDto>(_iAplicationDbContext.Persons.Update(_iMapper.Map<PersonEntity>(personDto)).Entity);
-            return person;
+                using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                {
+                    var person = _iMapper.Map<PersonDto>(
+                            unitOfWork.Context.Set<PersonEntity>().Update(_iMapper.Map<PersonEntity>(personDto)).Entity);
+                    unitOfWork.Commit();
+                    return person;
+                }
+            });
         }
     }
 }

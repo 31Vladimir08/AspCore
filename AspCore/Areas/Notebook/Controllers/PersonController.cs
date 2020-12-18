@@ -7,7 +7,7 @@
     using AspCore.Models.Notebook.Entities;
     using AspCore.Models.Notebook.Filters;
     using AutoMapper;
-    using BusinessLogic.Interfaces.Logic.Notebook;
+    using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Mvc;
@@ -15,12 +15,12 @@
     [Area("Notebook")]
     public class PersonController : Controller
     {
-        private readonly INotebookLogic _iNotebookLogic;
+        private readonly INotebookService _iNotebookLogic;
         private readonly IMapper _iMapper;
 
         public PersonController(
             IMapper iMapper,
-            INotebookLogic iNotebookLogic)
+            INotebookService iNotebookLogic)
         {
             _iNotebookLogic = iNotebookLogic;
             _iMapper = iMapper;
@@ -38,7 +38,12 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
         {
-            personViewModel.Persons = _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookLogic.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+            personViewModel.Persons = _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookLogic.GetPersonsAsync(
+                await Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter);
+                })));
 
             return View(personViewModel);
         }
