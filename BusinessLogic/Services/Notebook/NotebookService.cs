@@ -26,9 +26,29 @@
             _iMapper = iMapper;
         }
 
-        public async Task<dynamic> AddDetalsForPersonAsync(long personId)
+        public async Task<(EmailDto email, PhoneDto phone, SkypeDto skype)> AddDetalsForPersonAsync(EmailDto emailDto, PhoneDto phoneDto, SkypeDto skypeDto)
         {
-            throw new NotImplementedException();
+            return await Task.Run(
+                () =>
+                {
+                    using (var unitOfWork = _iUnitOfWorkFactory.Create())
+                    {
+                        var email = (!string.IsNullOrWhiteSpace(emailDto.EmailAddress)) ? _iMapper.Map<EmailDto>(
+                                unitOfWork.Context.Set<EmailEntity>().Add(_iMapper.Map<EmailEntity>(emailDto)).Entity) : null;
+                        var phone = (!string.IsNullOrWhiteSpace(phoneDto.PhoneNumber)) ? _iMapper.Map<PhoneDto>(
+                                unitOfWork.Context.Set<PhoneEntity>().Add(_iMapper.Map<PhoneEntity>(phoneDto)).Entity) : null;
+                        var skype = (!string.IsNullOrWhiteSpace(skypeDto.SkypeLogin)) ? _iMapper.Map<SkypeDto>(
+                                unitOfWork.Context.Set<SkypeEntity>().Add(_iMapper.Map<SkypeEntity>(skypeDto)).Entity) : null;
+                        unitOfWork.Commit();
+                        var result =
+                        (
+                            email: email,
+                            phone: phone,
+                            skype: skype
+                        );
+                        return result;
+                    }
+                });
         }
 
         public async Task<PersonDto> AddPersonAsync(PersonDto personDto)
@@ -79,7 +99,8 @@
                 using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     return _iMapper.Map<IEnumerable<EmailDto>>(
-                            unitOfWork.Context.Set<EmailEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                            unitOfWork.Context.Set<EmailEntity>().AsNoTracking()
+                            .Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
                 }
             });
 
@@ -88,7 +109,8 @@
                 using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     return _iMapper.Map<IEnumerable<PhoneDto>>(
-                            unitOfWork.Context.Set<PhoneEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                            unitOfWork.Context.Set<PhoneEntity>().AsNoTracking()
+                            .Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
                 }
             });
 
@@ -97,7 +119,8 @@
                 using (var unitOfWork = _iUnitOfWorkFactory.Create())
                 {
                     return _iMapper.Map<IEnumerable<SkypeDto>>(
-                            unitOfWork.Context.Set<SkypeEntity>().Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
+                            unitOfWork.Context.Set<SkypeEntity>().AsNoTracking()
+                            .Where(x => x.PersonId == personId).Take(ConstConteyner.MAXCOUNTELEMENTS));
                 }
             });
 

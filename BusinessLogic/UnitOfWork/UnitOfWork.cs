@@ -1,7 +1,6 @@
 ﻿namespace BusinessLogic.UnitOfWork
 {
     using System;
-    using BusinessLogic.Interfaces.Services;
     using BusinessLogic.Interfaces.UnitOfWork;
     using DataAccessLayer.Interfaces;
     using Microsoft.EntityFrameworkCore.Storage;

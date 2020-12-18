@@ -1,11 +1,14 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
     using AutoMapper;
     using BusinessLogic.Interfaces.Services.Notebook;
+    using BusinessLogic.Models.Notebook.Entities;
+    using BusinessLogic.Models.Notebook.Filters;
     using Microsoft.AspNetCore.Mvc;
 
     [Area("Notebook")]
@@ -67,7 +70,7 @@
         }
 
         // GET: NotebookController/Create
-        public ActionResult Create(long? id)
+        public async Task<IActionResult> Create(long? id)
         {
             if (id == null || id == 0)
             {
@@ -84,6 +87,32 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(long? id, DetailsViewModel detailsVM)
         {
+            detailsVM.Person = await Task.Run(
+               async () =>
+               {
+                   return _iMapper.Map<IEnumerable<PersonUi>>(
+                       await _iNotebookService.GetPersonsAsync(new PersonsFilterDto() { Id = id })).FirstOrDefault();
+               });
+            detailsVM.Email.PersonId = detailsVM.Person.Id;
+            detailsVM.Phone.PersonId = detailsVM.Person.Id;
+            detailsVM.SkypePerson.PersonId = detailsVM.Person.Id;
+            var emailDto = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<EmailDto>(detailsVM.Email);
+                });
+            var phoneDto = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<PhoneDto>(detailsVM.Phone);
+                });
+            var skypeDto = Task.Run(
+                () =>
+                {
+                    return _iMapper.Map<SkypeDto>(detailsVM.SkypePerson);
+                });
+            await Task.WhenAll(emailDto, phoneDto, skypeDto);
+            await _iNotebookService.AddDetalsForPersonAsync(emailDto.Result, phoneDto.Result, skypeDto.Result);
             return RedirectToAction(nameof(Details));
         }
     }

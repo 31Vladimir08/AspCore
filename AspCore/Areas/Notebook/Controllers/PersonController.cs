@@ -15,14 +15,14 @@
     [Area("Notebook")]
     public class PersonController : Controller
     {
-        private readonly INotebookService _iNotebookLogic;
+        private readonly INotebookService _iNotebookService;
         private readonly IMapper _iMapper;
 
         public PersonController(
             IMapper iMapper,
-            INotebookService iNotebookLogic)
+            INotebookService iNotebookService)
         {
-            _iNotebookLogic = iNotebookLogic;
+            _iNotebookService = iNotebookService;
             _iMapper = iMapper;
         }
 
@@ -38,12 +38,11 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
         {
-            personViewModel.Persons = _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookLogic.GetPersonsAsync(
-                await Task.Run(
-                () =>
+            personViewModel.Persons = await Task.Run(
+                async () =>
                 {
-                    return _iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter);
-                })));
+                    return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+                });
 
             return View(personViewModel);
         }
@@ -59,7 +58,8 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PersonUi personUi)
         {
-            await _iNotebookLogic.AddPersonAsync(_iMapper.Map<PersonDto>(personUi));
+            await _iNotebookService.AddPersonAsync(
+                await Task.Run(() => _iMapper.Map<PersonDto>(personUi)));
             return RedirectToAction(nameof(GetPersons));
         }
 
@@ -71,8 +71,12 @@
                 return NotFound();
             }
 
-            var person = _iMapper.Map<IEnumerable<PersonUi>>(
-                await _iNotebookLogic.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(new PersonsFilterUi() { Id = id }))).FirstOrDefault();
+            var person = await Task.Run(
+                async () =>
+                {
+                    return _iMapper.Map<IEnumerable<PersonUi>>(
+                        await _iNotebookService.GetPersonsAsync(new PersonsFilterDto() { Id = id })).FirstOrDefault();
+                });
             return View(person);
         }
 
@@ -82,7 +86,7 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditConfirmed(PersonUi personUi)
         {
-            await _iNotebookLogic.UpdatePersonAsync(_iMapper.Map<PersonDto>(personUi));
+            await _iNotebookService.UpdatePersonAsync(await Task.Run(() => _iMapper.Map<PersonDto>(personUi)));
             return RedirectToAction(nameof(GetPersons));
             /*try
             {
@@ -102,8 +106,12 @@
                 return NotFound();
             }
 
-            var person = _iMapper.Map<IEnumerable<PersonUi>>(
-                await _iNotebookLogic.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(new PersonsFilterUi() { Id = id }))).FirstOrDefault();
+            var person = await Task.Run(
+                async () =>
+                {
+                    return _iMapper.Map<IEnumerable<PersonUi>>(
+                        await _iNotebookService.GetPersonsAsync(new PersonsFilterDto() { Id = id })).FirstOrDefault();
+                });
             return View(person);
         }
 
@@ -113,7 +121,8 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(PersonUi personUi)
         {
-            await _iNotebookLogic.DeletePersonAsync(_iMapper.Map<PersonDto>(personUi));
+            await _iNotebookService.DeletePersonAsync(await Task.Run(
+                () => _iMapper.Map<PersonDto>(personUi)));
             return RedirectToAction(nameof(GetPersons));
         }
     }

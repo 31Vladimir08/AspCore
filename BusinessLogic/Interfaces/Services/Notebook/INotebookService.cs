@@ -21,6 +21,9 @@
             Task<IEnumerable<PhoneDto>> phones,
             Task<IEnumerable<SkypeDto>> skype)> GetDetalsAsync(long personId);
 
-        Task<dynamic> AddDetalsForPersonAsync(long personId);
+        Task<(
+            EmailDto email,
+            PhoneDto phone,
+            SkypeDto skype)> AddDetalsForPersonAsync(EmailDto emailDto, PhoneDto phoneDto, SkypeDto skypeDto);
     }
 }
