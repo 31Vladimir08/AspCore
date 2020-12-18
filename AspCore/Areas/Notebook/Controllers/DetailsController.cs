@@ -113,7 +113,7 @@
                 });
             await Task.WhenAll(emailDto, phoneDto, skypeDto);
             await _iNotebookService.AddDetalsForPersonAsync(emailDto.Result, phoneDto.Result, skypeDto.Result);
-            return RedirectToAction(nameof(Details));
+            return RedirectToAction(nameof(Details), new { id = id });
         }
     }
 }
