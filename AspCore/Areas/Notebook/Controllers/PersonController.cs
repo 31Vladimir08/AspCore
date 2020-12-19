@@ -5,7 +5,6 @@
     using System.Threading.Tasks;
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
-    using AspCore.Models.Notebook.Filters;
     using AutoMapper;
     using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
@@ -26,14 +25,13 @@
             _iMapper = iMapper;
         }
 
-        // GET: NotebookController
+        [HttpGet]
         public IActionResult GetPersons()
         {
             PersonViewModel personViewModel = new PersonViewModel();
             return View(personViewModel);
         }
 
-        // POST: NotebookController
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
@@ -47,13 +45,11 @@
             return View(personViewModel);
         }
 
-        // GET: NotebookController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PersonUi personUi)
@@ -63,7 +59,7 @@
             return RedirectToAction(nameof(GetPersons));
         }
 
-        // GET: NotebookController/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null || id == 0)
@@ -80,9 +76,7 @@
             return View(person);
         }
 
-        // POST: NotebookController/Edit/5
         [HttpPost]
-        [ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditConfirmed(PersonUi personUi)
         {
@@ -98,7 +92,7 @@
             }*/
         }
 
-        // GET: NotebookController/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null || id == 0)

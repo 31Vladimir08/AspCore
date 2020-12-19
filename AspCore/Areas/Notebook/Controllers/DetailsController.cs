@@ -1,14 +1,16 @@
 ﻿namespace AspCore.Areas.Notebook.Controllers
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
+
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
+
     using AutoMapper;
+
     using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
-    using BusinessLogic.Models.Notebook.Filters;
+
     using Microsoft.AspNetCore.Mvc;
 
     [Area("Notebook")]
@@ -25,6 +27,7 @@
             _iMapper = iMapper;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null || id == 0)
@@ -69,7 +72,6 @@
             return View();
         }
 
-        // GET: NotebookController/Create
         public async Task<IActionResult> Create(long? id)
         {
             if (id == null || id == 0)
@@ -82,20 +84,18 @@
             return View(detailsViewModel);
         }
 
-        // POST: NotebookController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(long? id, DetailsViewModel detailsVM)
         {
-            detailsVM.Person = await Task.Run(
-               async () =>
-               {
-                   return _iMapper.Map<IEnumerable<PersonUi>>(
-                       await _iNotebookService.GetPersonsAsync(new PersonsFilterDto() { Id = id })).FirstOrDefault();
-               });
-            detailsVM.Email.PersonId = detailsVM.Person.Id;
-            detailsVM.Phone.PersonId = detailsVM.Person.Id;
-            detailsVM.SkypePerson.PersonId = detailsVM.Person.Id;
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            detailsVM.Email.PersonId = (long)id;
+            detailsVM.Phone.PersonId = (long)id;
+            detailsVM.SkypePerson.PersonId = (long)id;
             var emailDto = Task.Run(
                 () =>
                 {

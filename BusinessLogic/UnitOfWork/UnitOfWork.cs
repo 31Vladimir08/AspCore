@@ -7,21 +7,25 @@
 
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly IAplicationDbContext _aplicationDbContext;
         private readonly IDbContextTransaction _iTransaction;
 
         public UnitOfWork(IAplicationDbContext aplicationDbContext)
         {
-            Context = aplicationDbContext;
-            _iTransaction = Context.Database.BeginTransaction();
+            _aplicationDbContext = aplicationDbContext;
+            _iTransaction = _aplicationDbContext.Database.BeginTransaction();
         }
 
-        public IAplicationDbContext Context { get; private set; }
+        public IAplicationDbContext Context
+        {
+            get => _aplicationDbContext;
+        }
 
         public void Commit()
         {
             try
             {
-                Context.SaveChanges();
+                _aplicationDbContext.SaveChanges();
                 _iTransaction.Commit();
             }
             catch (Exception e)
