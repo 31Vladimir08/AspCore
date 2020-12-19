@@ -28,10 +28,10 @@
                 _aplicationDbContext.SaveChanges();
                 _iTransaction.Commit();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 _iTransaction.Rollback();
-                throw e;
+                throw exception;
             }
         }
 
