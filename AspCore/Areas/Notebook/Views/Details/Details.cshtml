@@ -1,0 +1,129 @@
+﻿@model AspCore.Areas.Notebook.ViewModels.DetailsViewModel
+
+<div>
+    <h4>Person</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.Surname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.Surname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.Patronymic)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.Patronymic)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.DateOfBirth)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.DateOfBirth)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.Organization)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Person.Organization)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Create" asp-route-id="@Model.Person.Id">Create New</a>
+</p>
+
+<div class="row">
+    <div class="col-md-4">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Emails)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Emails)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EmailAddress)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Phones)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Phones)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PhoneNumber)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Skype)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Skype)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SkypeLogin)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+        <div>
+            <a asp-controller="Person" asp-action="GetPersons">Back to List</a>
+        </div>
