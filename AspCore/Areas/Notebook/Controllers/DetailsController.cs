@@ -5,6 +5,7 @@
 
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
+    using AspCore.Session;
 
     using AutoMapper;
 
@@ -16,6 +17,7 @@
     [Area("Notebook")]
     public class DetailsController : Controller
     {
+        private const string _sessionKey = "detailsDataKey";
         private readonly INotebookService _iNotebookService;
         private readonly IMapper _iMapper;
 
@@ -35,33 +37,43 @@
                 return NotFound();
             }
 
-            DetailsViewModel detailsViewModel = new DetailsViewModel();
-            var detals = await _iNotebookService.GetDetalsAsync((long)id);
-            var personUi = Task.Run(
+            var detailsViewModel = await Task.Run(() => HttpContext.Session.GetObject<DetailsViewModel>(_sessionKey));
+            if (detailsViewModel == null || detailsViewModel.Person.Id != id)
+            {
+                detailsViewModel = new DetailsViewModel();
+                var detals = await _iNotebookService.GetDetalsAsync((long)id);
+                var personUi = Task.Run(
+                    () =>
+                    {
+                        return _iMapper.Map<PersonUi>(detals.person.Result);
+                    });
+                var emailsUi = Task.Run(
+                    () =>
+                    {
+                        return _iMapper.Map<IEnumerable<EmailUi>>(detals.emails.Result);
+                    });
+                var phonesUi = Task.Run(
+                    () =>
+                    {
+                        return _iMapper.Map<IEnumerable<PhoneUi>>(detals.phones.Result);
+                    });
+                var skypeUi = Task.Run(
+                    () =>
+                    {
+                        return _iMapper.Map<IEnumerable<SkypeUi>>(detals.skype.Result);
+                    });
+                await Task.WhenAll(personUi, emailsUi, phonesUi, skypeUi);
+                detailsViewModel.Person = personUi.Result;
+                detailsViewModel.Emails = emailsUi.Result;
+                detailsViewModel.Phones = phonesUi.Result;
+                detailsViewModel.Skype = skypeUi.Result;
+                await Task.Run(
                 () =>
                 {
-                    return _iMapper.Map<PersonUi>(detals.person.Result);
+                    HttpContext.Session.SetObject(_sessionKey, detailsViewModel);
                 });
-            var emailsUi = Task.Run(
-                () =>
-                {
-                    return _iMapper.Map<IEnumerable<EmailUi>>(detals.emails.Result);
-                });
-            var phonesUi = Task.Run(
-                () =>
-                {
-                    return _iMapper.Map<IEnumerable<PhoneUi>>(detals.phones.Result);
-                });
-            var skypeUi = Task.Run(
-                () =>
-                {
-                    return _iMapper.Map<IEnumerable<SkypeUi>>(detals.skype.Result);
-                });
-            await Task.WhenAll(personUi, emailsUi, phonesUi, skypeUi);
-            detailsViewModel.Person = personUi.Result;
-            detailsViewModel.Emails = emailsUi.Result;
-            detailsViewModel.Phones = phonesUi.Result;
-            detailsViewModel.Skype = skypeUi.Result;
+            }
+
             return View(detailsViewModel);
         }
 

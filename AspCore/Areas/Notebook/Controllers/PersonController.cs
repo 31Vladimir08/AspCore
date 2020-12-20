@@ -34,16 +34,8 @@
         [HttpGet]
         public async Task<IActionResult> GetPersons()
         {
-            var personViewModel = HttpContext.Session.GetObject<PersonViewModel>(_sessionKey);
-            if (personViewModel != null)
-            {
-                personViewModel.Persons = await Task.Run(
-                    async () =>
-                    {
-                        return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
-                    });
-            }
-            else
+            var personViewModel = await Task.Run(() => HttpContext.Session.GetObject<PersonViewModel>(_sessionKey));
+            if (personViewModel == null)
             {
                 personViewModel = new PersonViewModel();
                 personViewModel.Persons = await Task.Run(
@@ -64,7 +56,11 @@
                 {
                     return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
                 });
-            HttpContext.Session.SetObject(_sessionKey, personViewModel);
+            await Task.Run(
+                () =>
+                {
+                    HttpContext.Session.SetObject(_sessionKey, personViewModel);
+                });
             return View(nameof(GetPersons), personViewModel);
         }
 
