@@ -3,17 +3,23 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
+    using AspCore.Session;
+
     using AutoMapper;
+
     using BusinessLogic.Interfaces.Services.Notebook;
     using BusinessLogic.Models.Notebook.Entities;
     using BusinessLogic.Models.Notebook.Filters;
+
     using Microsoft.AspNetCore.Mvc;
 
     [Area("Notebook")]
     public class PersonController : Controller
     {
+        private const string _sessionKey = "personDataKey";
         private readonly INotebookService _iNotebookService;
         private readonly IMapper _iMapper;
 
@@ -26,23 +32,36 @@
         }
 
         [HttpGet]
-        public IActionResult GetPersons()
+        public async Task<IActionResult> GetPersons()
         {
-            PersonViewModel personViewModel = new PersonViewModel();
+            var personViewModel = await Task.Run(() => HttpContext.Session.GetObject<PersonViewModel>(_sessionKey));
+            if (personViewModel == null)
+            {
+                personViewModel = new PersonViewModel();
+                personViewModel.Persons = await Task.Run(
+                    async () =>
+                    {
+                        return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+                    });
+            }
+
             return View(personViewModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetPersons(PersonViewModel personViewModel)
+        [HttpGet]
+        public async Task<IActionResult> GetPersonsAction(PersonViewModel personViewModel)
         {
             personViewModel.Persons = await Task.Run(
                 async () =>
                 {
                     return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
                 });
-
-            return View(personViewModel);
+            await Task.Run(
+                () =>
+                {
+                    HttpContext.Session.SetObject(_sessionKey, personViewModel);
+                });
+            return View(nameof(GetPersons), personViewModel);
         }
 
         public ActionResult Create()
@@ -77,6 +96,7 @@
         }
 
         [HttpPost]
+        [ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditConfirmed(PersonUi personUi)
         {
@@ -109,7 +129,6 @@
             return View(person);
         }
 
-        // POST: NotebookController/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
