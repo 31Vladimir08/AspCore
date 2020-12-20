@@ -65,13 +65,7 @@
             return View(detailsViewModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(DetailsViewModel details)
-        {
-            return View();
-        }
-
+        [HttpGet]
         public async Task<IActionResult> Create(long? id)
         {
             if (id == null || id == 0)
