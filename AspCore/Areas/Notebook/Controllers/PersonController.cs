@@ -6,6 +6,7 @@
 
     using AspCore.Areas.Notebook.ViewModels;
     using AspCore.Models.Notebook.Entities;
+    using AspCore.Session;
 
     using AutoMapper;
 
@@ -33,12 +34,25 @@
         [HttpGet]
         public async Task<IActionResult> GetPersons()
         {
-            PersonViewModel personViewModel = new PersonViewModel();
-            personViewModel.Persons = await Task.Run(
-                async () =>
-                {
-                    return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
-                });
+            var personViewModel = HttpContext.Session.GetObject<PersonViewModel>(_sessionKey);
+            if (personViewModel != null)
+            {
+                personViewModel.Persons = await Task.Run(
+                    async () =>
+                    {
+                        return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+                    });
+            }
+            else
+            {
+                personViewModel = new PersonViewModel();
+                personViewModel.Persons = await Task.Run(
+                    async () =>
+                    {
+                        return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
+                    });
+            }
+
             return View(personViewModel);
         }
 
@@ -50,6 +64,7 @@
                 {
                     return _iMapper.Map<IEnumerable<PersonUi>>(await _iNotebookService.GetPersonsAsync(_iMapper.Map<PersonsFilterDto>(personViewModel.PersonFilter)));
                 });
+            HttpContext.Session.SetObject(_sessionKey, personViewModel);
             return View(nameof(GetPersons), personViewModel);
         }
 
